@@ -25,6 +25,7 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: MyHanaCAP-db
+      - name: MyHanaCAP-auth
 
   - name: MyHanaCAP-db-deployer
     type: hdb
@@ -47,6 +48,7 @@ modules:
           name: srv-api # must be used in xs-app.json as well
           url: ~{srv-url}
           forwardAuthToken: true
+      - name: MyHanaCAP-auth
     provides:
       - name: app-api
         properties:
@@ -59,3 +61,20 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: MyHanaCAP-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: MyHanaCAP-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
+          redirect-uris:
+            - https://*~{app-api/app-uri}/**
+    requires:
+      - name: app-api
