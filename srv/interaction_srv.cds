@@ -1,4 +1,5 @@
 using app.interactions from '../db/interactions';
+using V_INTERACTION from '../db/interactions';
 using {sap} from '@sap/cds-common-content';
 
 service CatalogService {
@@ -18,5 +19,10 @@ entity Languages           as projection on sap.common.Languages;
 @readonly
 @restrict: [{ grant: 'READ', where: 'country_code = ''DE'''}]
 entity HeaderView as projection on interactions.Headers;
+
+function sleep() returns Boolean;
+
+@readonly
+entity V_interaction as projection on V_INTERACTION;
 
 }
